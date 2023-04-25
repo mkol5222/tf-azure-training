@@ -1,0 +1,7 @@
+# can be obtained using commands in README.md
+client_secret   = "CHANGE_ME"
+client_id       = "CHANGE_ME"
+tenant_id       = "CHANGE_ME"
+subscription_id = "CHANGE_ME"
+
+# more parameters below
