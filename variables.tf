@@ -18,3 +18,7 @@ variable "client_secret" {
   type        = string
 }
   
+variable "admin_password" {
+  description = "Administrator password of deployed Virtual Macine. The password must meet the complexity requirements of Azure"
+  type        = string
+}

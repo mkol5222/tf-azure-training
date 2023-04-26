@@ -32,3 +32,30 @@ tenant_id = "$TENANT_ID"
 subscription_id = "$SUBSCRIPTION_ID"
 EOF
 ```
+
+
+### Login to Ubuntu Machines using SSH
+
+```powershell
+# assume Powershell
+
+# make sure if SSH check for config files in ~/.ssh/config.d folder
+
+cat ~/.ssh/config | sls 'config.d'
+# Include config.d/*.conf
+# if not, add line above to ~/.ssh/config and mkdir ~/.ssh/config.d
+
+# retrieve ubuntu1 and ubuntu2 private SSH keys
+terraform output -raw u1_ssh_key > ~/.ssh/ubuntu1.key
+terraform output -raw u2_ssh_key > ~/.ssh/ubuntu2.key
+
+# retrieve Ubuntu VM ssh configs for easy access
+terraform output -raw u1_ssh_config > ~/.ssh/config.d/ubuntu1.conf
+terraform output -raw u2_ssh_config > ~/.ssh/config.d/ubuntu2.conf
+
+# test access VMs
+ssh ubuntu1
+ssh ubuntu2
+```
+
+```

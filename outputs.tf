@@ -9,6 +9,9 @@ output "u1_ssh_ip" {
     value     = module.ubuntu1.ssh_key_pub
     sensitive = true
   }
+  output "u1_ssh_config" {
+    value = module.ubuntu1.ssh_config
+  }
 
   output "u2_ssh_ip" {
     value = module.ubuntu2.ssh_ip
@@ -20,4 +23,7 @@ output "u1_ssh_ip" {
   output "u2_ssh_key_pub" {
     value     = module.ubuntu2.ssh_key_pub
     sensitive = true
+  }
+    output "u2_ssh_config" {
+    value = module.ubuntu2.ssh_config
   }

@@ -47,7 +47,7 @@ module "standalone-chkp" {
   cp_back_subnet_id = module.environment.cp_back_subnet_id
   cp_front_subnet_id = module.environment.cp_front_subnet_id
   admin_username = "guru"
-  admin_password = "Password123!"
+  admin_password = var.admin_password
   authentication_type = "Password"
   sic_key = "Vpn123456!Vpn123456"
   management_GUI_client_network = "0.0.0.0/0"
