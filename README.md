@@ -138,3 +138,15 @@ api status
 ### AKS service account for CP integration
 https://gist.github.com/mkol5222/7d2015cd61e6402ae7b193674b923dc5
 
+DC Query works on top of Identity Awareness
+```powershell
+[Expert@chkp-standalone:0]# pdp m su a
+Ip          Name/Domain                
+=======================================
+10.42.1.16  [m] webka1-657b8bbdff-gd2wg
+10.42.1.28  [m] webka1-657b8bbdff-7ssws
+10.42.1.22  [m] webka1-657b8bbdff-zfzng
+10.42.1.20  [m] webka1-657b8bbdff-l958w
+10.42.1.13  [m] webka1-657b8bbdff-72wxm
+10.42.1.8   [m] webka1-657b8bbdff-xkc2r
+```
