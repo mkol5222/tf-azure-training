@@ -32,7 +32,7 @@ resource "checkpoint_management_network" "net-vnet42" {
     broadcast    = "allow"
     color        = "blue"
     mask_length4 = 16
-    name         = "net-aks"
+    name         = "net-vnet42"
     nat_settings = {
         "auto_rule"   = "true"
         "hide_behind" = "gateway"
