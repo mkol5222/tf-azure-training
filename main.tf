@@ -4,7 +4,7 @@ module "environment" {
   client_id       = var.client_id
   tenant_id       = var.tenant_id
   subscription_id = var.subscription_id
-  route_through_firewall = true
+  route_through_firewall = var.route_through_firewall
 }
 
 module "ubuntu1" {

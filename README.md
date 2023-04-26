@@ -48,6 +48,9 @@ cat ~/.ssh/config | sls 'config.d'
 # retrieve ubuntu1 and ubuntu2 private SSH keys
 terraform output -raw u1_ssh_key > ~/.ssh/ubuntu1.key
 terraform output -raw u2_ssh_key > ~/.ssh/ubuntu2.key
+# might need to review permissions in Linux/bash
+chmod 400 ~/.ssh/ubuntu1.key
+chmod 400 ~/.ssh/ubuntu2.key
 
 # retrieve Ubuntu VM ssh configs for easy access
 terraform output -raw u1_ssh_config > ~/.ssh/config.d/ubuntu1.conf
@@ -70,11 +73,14 @@ terraform output -raw cp_login_cmd | iex
 ### Use AKS cluster with kubectl
 
 ```powershell
+# pay attantion to -g RESOURCEGROUPNAME in case you changed default
 az aks get-credentials -g tf-azure-training-rg -n aks1
 kubectl get nodes
 ```
 
 ### Disable hide NAT for AKS Pods
+You will have to re-apply TF with route-through-firewall=true for Pods to reach Internet as NAT will be done on CHKP.
+
 ```powershell
 # assume Powershell
 
