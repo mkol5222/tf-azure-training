@@ -5,3 +5,4 @@ output "cp-pass" {
   sensitive = true
   value     = var.admin_password
 }
+
