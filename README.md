@@ -128,3 +128,7 @@ mgmt_cli -r true set api-settings accepted-api-calls-from "All IP addresses" --d
 api restart
 api status
 ```
+
+### AKS service account for CP integration
+https://gist.github.com/mkol5222/7d2015cd61e6402ae7b193674b923dc5
+
