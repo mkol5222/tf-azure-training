@@ -1,4 +1,5 @@
 
+# accept offering
 resource "azurerm_marketplace_agreement" "checkpoint" {
   count     = 0
   publisher = var.publisher   //"checkpoint"
@@ -6,12 +7,16 @@ resource "azurerm_marketplace_agreement" "checkpoint" {
   plan      = var.vm_os_sku   // "mgmt-byol"             // vm_os_sku             = "mgmt-byol"                              # "mgmt-byol" or "sg-byol" 
 }
 
+//
+data "azurerm_resource_group" "rg" {
+  name = var.resource_group_name
+}
 
-
+# CHKP public IP
 resource "azurerm_public_ip" "public-ip" {
   name                    = var.sg_name
-  location                = azurerm_resource_group.rg.location
-  resource_group_name     = azurerm_resource_group.rg.name
+  location                = data.azurerm_resource_group.rg.location
+  resource_group_name     = data.azurerm_resource_group.rg.name
   allocation_method       = var.vnet_allocation_method
   idle_timeout_in_minutes = 30
   domain_name_label = join("", [
@@ -28,18 +33,19 @@ resource "azurerm_public_ip" "public-ip" {
   }
 }
 
+# external NIC
 resource "azurerm_network_interface" "nic1" {
   depends_on = [
   azurerm_public_ip.public-ip]
   name                          = "eth0"
-  location                      = azurerm_resource_group.rg.location
-  resource_group_name           = azurerm_resource_group.rg.name
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
   enable_ip_forwarding          = true
   enable_accelerated_networking = true
 
   ip_configuration {
     name                          = "ipconfig1"
-    subnet_id                     = azurerm_subnet.cp-front.id
+    subnet_id                     = var.cp_front_subnet_id
     private_ip_address_allocation = var.vnet_allocation_method
     private_ip_address            = "10.42.3.4" //cidrhost(var.subnet_prefixes[0], 4)
     public_ip_address_id          = azurerm_public_ip.public-ip.id
@@ -52,17 +58,19 @@ resource "azurerm_network_interface" "nic1" {
     ]
   }
 }
+
+# internal NIC
 resource "azurerm_network_interface" "nic2" {
 
   name                          = "eth1"
-  location                      = azurerm_resource_group.rg.location
-  resource_group_name           = azurerm_resource_group.rg.name
+  location                      = data.azurerm_resource_group.rg.location
+  resource_group_name           = data.azurerm_resource_group.rg.name
   enable_ip_forwarding          = true
   enable_accelerated_networking = true
 
   ip_configuration {
     name                          = "ipconfig2"
-    subnet_id                     = azurerm_subnet.cp-back.id
+    subnet_id                     = var.cp_back_subnet_id
     private_ip_address_allocation = var.vnet_allocation_method
     private_ip_address            = "10.42.4.4" //cidrhost(azurerm_subnet.cp-back.subnet_prefixes[0], 4)
   }
@@ -84,8 +92,8 @@ resource "azurerm_network_interface" "nic2" {
 # }
 resource "azurerm_storage_account" "vm-boot-diagnostics-storage" {
   name                     = "bootdiag${random_id.randomId.hex}"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
+  resource_group_name      = data.azurerm_resource_group.rg.name
+  location                 = data.azurerm_resource_group.rg.location
   account_tier             = var.storage_account_tier
   account_replication_type = var.account_replication_type
   account_kind             = "Storage"
@@ -111,15 +119,21 @@ resource "azurerm_virtual_machine" "sg-vm-instance" {
     azurerm_network_interface.nic2
   ]
 
-  location = azurerm_resource_group.rg.location
-  name     = var.sg_name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+
+  name = var.sg_name
+
   network_interface_ids = [
     azurerm_network_interface.nic1.id,
     azurerm_network_interface.nic2.id
   ]
-  resource_group_name           = azurerm_resource_group.rg.name
+
+
   vm_size                       = var.vm_size
+
   delete_os_disk_on_termination = var.delete_os_disk_on_termination
+
   primary_network_interface_id  = azurerm_network_interface.nic1.id
 
   #   identity {
@@ -138,10 +152,12 @@ resource "azurerm_virtual_machine" "sg-vm-instance" {
     enabled     = true
     storage_uri = join(",", azurerm_storage_account.vm-boot-diagnostics-storage.*.primary_blob_endpoint)
   }
+
   os_profile {
     computer_name  = var.sg_name
     admin_username = var.admin_username
     admin_password = var.admin_password
+    
     custom_data = templatefile("${path.module}/cloud-init.sh", {
       installation_type             = var.installation_type
       allow_upload_download         = var.allow_upload_download
