@@ -103,6 +103,7 @@ variable "allow_upload_download" {
 variable "os_version" {
   description = "GAIA OS version"
   type        = string
+  default            = "R81.10"
 }
 
 variable "template_name" {

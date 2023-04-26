@@ -7,6 +7,16 @@ resource "azurerm_marketplace_agreement" "checkpoint" {
   plan      = var.vm_os_sku   // "mgmt-byol"             // vm_os_sku             = "mgmt-byol"                              # "mgmt-byol" or "sg-byol" 
 }
 
+resource "random_id" "randomId" {
+  keepers = {
+    # Generate a new ID only when a new resource group is defined
+    # resource_group = data.azurerm_resource_group.rg.name
+    sg_name = var.sg_name
+  }
+
+  byte_length = 8
+}
+
 //
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
@@ -157,7 +167,7 @@ resource "azurerm_virtual_machine" "sg-vm-instance" {
     computer_name  = var.sg_name
     admin_username = var.admin_username
     admin_password = var.admin_password
-    
+
     custom_data = templatefile("${path.module}/cloud-init.sh", {
       installation_type             = var.installation_type
       allow_upload_download         = var.allow_upload_download
@@ -166,7 +176,7 @@ resource "azurerm_virtual_machine" "sg-vm-instance" {
       template_version              = var.template_version
       is_blink                      = var.is_blink
       bootstrap_script64            = base64encode(var.bootstrap_script)
-      location                      = azurerm_resource_group.rg.location
+      location                      = data.azurerm_resource_group.rg.location
       sic_key                       = var.sic_key
       management_GUI_client_network = var.management_GUI_client_network
       enable_custom_metrics         = var.enable_custom_metrics ? "yes" : "no"
