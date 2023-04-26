@@ -11,6 +11,14 @@ resource "azurerm_public_ip" "public_ip" {
   tags = {
     environment = "azure-demo"
   }
+  
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      tags,
+    ]
+  }
 }
 
 resource "azurerm_network_security_group" "nsg" {

@@ -37,6 +37,6 @@ output "cp_pass" {
 }
 
 output "cp_login_cmd" {
-  value     = "terraform output -raw cp_pass | clip.exe; ssh admin@${module.standalone-chkp.cp-pass}"
+  value     = "terraform output -raw cp_pass | clip.exe; ssh admin@${module.standalone-chkp.cp-public-ip}"
   sensitive = true
 }

@@ -58,4 +58,73 @@ ssh ubuntu1
 ssh ubuntu2
 ```
 
+### Login to Check Point VM using SSH
+
+```powershell
+# assume Powershell
+terraform output -raw cp_login_cmd | iex
+# cliboard contains password, just paste it (e.g mouse right click)
+
+```
+
+### Use AKS cluster with kubectl
+
+```powershell
+az aks get-credentials -g tf-azure-training-rg -n aks1
+kubectl get nodes
+```
+
+### Disable hide NAT for AKS Pods
+```powershell
+# assume Powershell
+
+@'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: azure-ip-masq-agent-config
+  namespace: kube-system
+  labels:
+    component: ip-masq-agent
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: EnsureExists
+data:
+  ip-masq-agent: |-
+    nonMasqueradeCIDRs:
+      - 0.0.0.0/0
+    masqLinkLocal: true
+'@ |  kubectl -n kube-system apply -f -
+
+```
+
+### Some Azure demo workload
+```powershell
+kubectl create ns demo
+kubectl -n demo create deploy webka1 --image nginx --replicas 3
+
+kubectl -n demo get pods -o wide --show-labels
+
+# some traffice
+kubectl -n demo get pods -o name | % { kubectl -n demo exec -it $_ -- curl ip.iol.cz/ip/ -s -m 2 }
+```
+
+### Wait for CP Management to become available
+Login using SSH
+```powershell
+# VM diagnostics in Azure (serial console)
+
+# before FTCW finished
+tail -f /var/log/cloud_config.log
+# after reboot check for server readiness
+watch -d api status
+```
+
+### Enable CP Management API Server
+```
+# add user api_user
+
+# enable API server
+mgmt_cli -r true set api-settings accepted-api-calls-from "All IP addresses" --domain 'System Data' --format json
+api restart
+api status
 ```

@@ -6,3 +6,7 @@ output "cp-pass" {
   value     = var.admin_password
 }
 
+output "sg_name" {
+  value = var.sg_name
+}
+

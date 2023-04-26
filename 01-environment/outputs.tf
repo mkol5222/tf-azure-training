@@ -6,6 +6,11 @@ output "cp_back_subnet_id" {
     value = azurerm_subnet.cp-back.id
 }
 
+
+output "aks_subnet_id" {
+    value = azurerm_subnet.aks-subnet.id
+}
+
 output "cp_front_subnet_id" {
     value = azurerm_subnet.cp-front.id
 }

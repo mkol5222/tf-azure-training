@@ -4,6 +4,7 @@ module "environment" {
   client_id       = var.client_id
   tenant_id       = var.tenant_id
   subscription_id = var.subscription_id
+  route_through_firewall = true
 }
 
 module "ubuntu1" {
@@ -53,4 +54,25 @@ module "standalone-chkp" {
   management_GUI_client_network = "0.0.0.0/0"
   vm_size                       = "Standard_D3_v2"
 
+}
+
+module "aks1" {
+  depends_on = [
+    module.environment.aks_subnet_id
+  ]
+  aks_name                       = "aks1"
+  source                        = "./04-aks"
+  aks_subnet_id = module.environment.aks_subnet_id
+  resource_group_name           = module.environment.resource_group_name
+}
+
+
+module "cp-policy" {
+  source = "./05-policy"
+  cp-management-host = module.standalone-chkp.cp-public-ip
+  cp-management-user = "api_user"
+  cp-management-password = var.cp-management-password
+  publish = var.publish
+  install = var.install
+  install_target = module.standalone-chkp.sg_name
 }

@@ -35,3 +35,9 @@ variable "resource_group_location" {
     type = string
     default = "tf-azure-training-vnet"
   }
+
+  variable "route_through_firewall" {
+    description = "set true if route through firewall is needed"
+    type = bool
+    default = false
+  }

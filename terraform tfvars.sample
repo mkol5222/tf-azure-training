@@ -5,3 +5,5 @@ tenant_id       = "CHANGE_ME"
 subscription_id = "CHANGE_ME"
 
 # more parameters below
+admin_password = "CHANGEYOURPassword123!"
+route_through_firewall = false
