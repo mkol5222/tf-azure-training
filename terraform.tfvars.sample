@@ -7,3 +7,5 @@ subscription_id = "CHANGE_ME"
 # more parameters below
 admin_password = "CHANGEYOURPassword123!"
 route_through_firewall = false
+cp-management-password = "CHANGE-Vpn123321Vpn"
+cp-management-user = "api_user"
