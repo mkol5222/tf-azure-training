@@ -7,6 +7,9 @@ module "environment" {
 }
 
 module "ubuntu1" {
+    depends_on = [
+    module.environment.linux-subnet-id
+  ]
     source          = "./02-linux-vm"
     client_secret   = var.client_secret
     client_id       = var.client_id
@@ -19,6 +22,9 @@ module "ubuntu1" {
 }
 
 module "ubuntu2" {
+  depends_on = [
+    module.environment.linux-subnet-id
+  ]
     source          = "./02-linux-vm"
     client_secret   = var.client_secret
     client_id       = var.client_id
