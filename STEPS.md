@@ -185,3 +185,13 @@ kubectl -n demo get pods -o wide --show-labels
 
 kubectl get nodes -o wide
 ```
+
+### Cleanup
+
+To avoid cloud costs, destroy the environment:
+```bash
+terraform apply -target module.environment -var route_through_firewall=false -auto-approve
+
+terraform destroy -target module.cp-policy
+terraform destroy 
+```
