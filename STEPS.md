@@ -132,10 +132,11 @@ terraform init
 terraform apply -target module.cp-policy
 
 # publish session
-terraform apply -target module.cp-policy -var publish=true -auto-accept
+terraform apply -target module.cp-policy -var publish=true -auto-approve
 # install policy
-terraform apply -target module.cp-policy -var install=true -auto-accept
+terraform apply -target module.cp-policy -var install=true -auto-approve
 ```
+
 
 ### Route traffic throuh Check Point
 
@@ -145,4 +146,42 @@ code terraform.tfvars
 
 # apply change
 terraform apply -target module.environment
+```
+
+### Make some traffice from Ubuntu and AKS
+
+```bash
+PODS=$(kubectl -n demo get pods -o name); for P in $PODS; do echo "$P"; kubectl -n demo exec -it "$P" -- curl ip.iol.cz/ip/ -s -m 2; echo; done
+```
+
+### Disable NAT for traffice from Pods
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: azure-ip-masq-agent-config
+  namespace: kube-system
+  labels:
+    component: ip-masq-agent
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: EnsureExists
+data:
+  ip-masq-agent: |-
+    nonMasqueradeCIDRs:
+      - 0.0.0.0/0
+    masqLinkLocal: true
+EOF
+```
+
+Now wait bit and try traffic again and check FW logs:
+
+```bash
+PODS=$(kubectl -n demo get pods -o name); for P in $PODS; do echo "$P"; kubectl -n demo exec -it "$P" -- curl ip.iol.cz/ip/ -s -m 2; echo; done
+
+# IPs for reference
+kubectl -n demo get pods -o wide --show-labels
+
+kubectl get nodes -o wide
 ```
