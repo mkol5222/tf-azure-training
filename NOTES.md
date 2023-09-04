@@ -104,5 +104,47 @@ ssh admin@$(terraform output -raw cp_public_ip)
 
 ```
 
+### Route traffic through Check Point
 
+Make sure you login to SmartConsole and create policy+NAT and install it.
+E.g. Any-Any-Accept-Log and Hide NAT of 10.42.0.0/16 behind gateway.
 
+Once SG is passing traffic - change routing through CP using terraform:
+
+```bash
+ terraform apply -var route_through_firewall=true -auto-approve
+```
+
+### Fine tune AKS NAT configuration to prevent hiding Pod IP addresses:
+
+Disable NAT for traffice from Pods
+
+```bash
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: azure-ip-masq-agent-config
+  namespace: kube-system
+  labels:
+    component: ip-masq-agent
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: EnsureExists
+data:
+  ip-masq-agent: |-
+    nonMasqueradeCIDRs:
+      - 0.0.0.0/0
+    masqLinkLocal: true
+EOF
+```
+
+Now wait bit and try traffic again and check FW logs:
+
+```bash
+PODS=$(kubectl -n demo get pods -o name); for P in $PODS; do echo "$P"; kubectl -n demo exec -it "$P" -- curl ip.iol.cz/ip/ -s -m 2; echo; done
+
+# IPs for reference
+kubectl -n demo get pods -o wide --show-labels
+
+kubectl get nodes -o wide
+```
