@@ -7,7 +7,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     var.aks_subnet_id
   ]
   name                = var.aks_name
-  kubernetes_version  = "1.24"
+  kubernetes_version  = "1.26"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
   dns_prefix          = var.aks_name
