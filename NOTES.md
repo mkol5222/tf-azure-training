@@ -5,6 +5,8 @@
 az login
 # or with specific tenant 
 az login --tenant TENANT_ID
+# you might want to use device code flow
+az login --use-device-code --tenant TENANT_ID
 
 # verify
 az account list -o table
@@ -68,7 +70,7 @@ terraform apply -target module.aks1
 
 ```bash
 # pay attantion to -g RESOURCEGROUPNAME in case you changed default
-az aks get-credentials -g tf-azure-training-rg -n aks1
+az aks get-credentials -g tf-azure-training-rg -n aks1 --admin 
 kubectl get nodes -o wide
 
 # deploy app
@@ -136,6 +138,16 @@ data:
       - 0.0.0.0/0
     masqLinkLocal: true
 EOF
+```
+
+Verify agent accepted new setting for nonMasquradeCIDs:
+```bash
+kubectl -n kube-system logs ds/azure-ip-masq-agent | grep '0.0.0.0'
+```
+
+Expected result under nonMasqueradeCIDRs includes 0.0.0.0/0:
+```
+I0904 11:42:10.792068       1 ip-masq-agent.go:199] using config: {"nonMasqueradeCIDRs":["0.0.0.0/0","10.42.1.0/24","10.0.0.0/16","10.42.0.0/16"],"masqLinkLocal":true,"masqLinkLocalIPv6":false}
 ```
 
 Now wait bit and try traffic again and check FW logs:
