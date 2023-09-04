@@ -23,18 +23,18 @@ variable "admin_password" {
   type        = string
 }
 
-  variable "route_through_firewall" {
-    description = "set true if route through firewall is needed"
-    type = bool
-    default = false
-  }
+variable "route_through_firewall" {
+  description = "set true if route through firewall is needed"
+  type        = bool
+  default     = false
+}
 
 variable "publish" {
   type        = bool
   default     = false
   description = "Set to true to publish changes"
 }
-  variable "install" {
+variable "install" {
   type        = bool
   default     = false
   description = "Set to true to INSTALL POLICY"
