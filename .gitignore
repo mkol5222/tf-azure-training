@@ -39,3 +39,4 @@ terraform.rc
 
 sid.json
 fingerprints.json
+faas-cli.exe
