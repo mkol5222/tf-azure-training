@@ -75,12 +75,12 @@ module "aks1" {
 }
 
 
-# module "cp-policy" {
-#   source = "./05-policy"
-#   cp-management-host = module.standalone-chkp.cp-public-ip
-#   cp-management-user = "api_user"
-#   cp-management-password = var.cp-management-password
-#   publish = var.publish
-#   install = var.install
-#   install_target = module.standalone-chkp.sg_name
-# }
+module "cp-policy" {
+  source = "./05-policy"
+  cp-management-host = module.standalone-chkp.cp-public-ip
+  cp-management-user = var.cp-management-user
+  cp-management-password = var.cp-management-password
+  publish = var.publish
+  install = var.install
+  install_target = module.standalone-chkp.sg_name
+}
