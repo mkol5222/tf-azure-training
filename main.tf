@@ -7,20 +7,20 @@ module "environment" {
   route_through_firewall = var.route_through_firewall
 }
 
-# module "ubuntu1" {
-#   depends_on = [
-#     module.environment.linux-subnet-id
-#   ]
-#   source               = "./02-linux-vm"
-#   client_secret        = var.client_secret
-#   client_id            = var.client_id
-#   tenant_id            = var.tenant_id
-#   subscription_id      = var.subscription_id
-#   resource_group_name  = module.environment.resource_group_name
-#   linux-subnet-name    = "linux-subnet"
-#   virtual_network_name = module.environment.virtual_network_name
-#   vm_name              = "ubuntu1"
-# }
+module "ubuntu1" {
+  depends_on = [
+    module.environment.linux-subnet-id
+  ]
+  source               = "./02-linux-vm"
+  client_secret        = var.client_secret
+  client_id            = var.client_id
+  tenant_id            = var.tenant_id
+  subscription_id      = var.subscription_id
+  resource_group_name  = module.environment.resource_group_name
+  linux-subnet-name    = "linux-subnet"
+  virtual_network_name = module.environment.virtual_network_name
+  vm_name              = "ubuntu1"
+}
 
 # module "ubuntu2" {
 #   depends_on = [
@@ -75,12 +75,12 @@ module "aks1" {
 }
 
 
-module "cp-policy" {
-  source = "./05-policy"
-  cp-management-host = module.standalone-chkp.cp-public-ip
-  cp-management-user = var.cp-management-user
-  cp-management-password = var.cp-management-password
-  publish = var.publish
-  install = var.install
-  install_target = module.standalone-chkp.sg_name
-}
+# module "cp-policy" {
+#   source = "./05-policy"
+#   cp-management-host = module.standalone-chkp.cp-public-ip
+#   cp-management-user = var.cp-management-user
+#   cp-management-password = var.cp-management-password
+#   publish = var.publish
+#   install = var.install
+#   install_target = module.standalone-chkp.sg_name
+# }
